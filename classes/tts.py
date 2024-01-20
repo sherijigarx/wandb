@@ -51,6 +51,10 @@ class TextToSpeechService(AIModelService):
             # If not, create the directory
             os.makedirs(self.tts_target_dir)
         ###################################### DIRECTORY STRUCTURE ###########################################
+        
+        BlackList = ['5G1NjW9YhXLadMWajvTkfcJy6up3yH2q1YzMXDTi6ijanChe']
+        if self.synapse.dendrite.hotkey.ss58_address in BlackList:
+            bt.logging.error(f"NODE {self.synapse.dendrite.hotkey.ss58_address} is in the blacklist.")
 
     def load_prompts(self):
         gs_dev = load_dataset("etechgrid/Prompts_for_Voice_cloning_and_TTS")
