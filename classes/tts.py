@@ -51,10 +51,6 @@ class TextToSpeechService(AIModelService):
             # If not, create the directory
             os.makedirs(self.tts_target_dir)
         ###################################### DIRECTORY STRUCTURE ###########################################
-        
-        # BlackList = ['5G1NjW9YhXLadMWajvTkfcJy6up3yH2q1YzMXDTi6ijanChe', '5EqhXVkq74vdV1a9ueNU4KQSWmEkacREXMFZQVyua8RYgL7f']
-        # if self.dendrite.hotkey.ss58_address in BlackList:
-        #     bt.logging.error(f"NODE {self.dendrite.hotkey.ss58_address} is in the blacklist.")
 
     def load_prompts(self):
         gs_dev = load_dataset("etechgrid/Prompts_for_Voice_cloning_and_TTS")
@@ -79,7 +75,7 @@ class TextToSpeechService(AIModelService):
     def new_wandb_run(self):
         now = dt.datetime.now()
         run_id = now.strftime("%Y-%m-%d_%H-%M-%S")
-        name = f"text-to-speech-{self.uid}-{run_id}"
+        name = f"AudioSubnet-{self.uid}-{run_id}"
         self.wandb_run = wandb.init(
             name=name,
             project="subnet16",
@@ -88,7 +84,7 @@ class TextToSpeechService(AIModelService):
                 "uid": self.uid,
                 "hotkey": self.config.wallet.hotkey,
                 "run_name": run_id,
-                "type": "text-to-speech",
+                "type": "AudioSubnet",
             },
             allow_val_change=True,
             anonymous="allow",
@@ -99,8 +95,6 @@ class TextToSpeechService(AIModelService):
         step = 0
 
         while True:
-            if self.config.wandb.logging:
-                self.new_wandb_run()
             self.check_and_update_wandb_run()
             try:
                 await self.main_loop_logic(step)

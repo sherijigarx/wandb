@@ -84,7 +84,7 @@ class VoiceCloningService(AIModelService):
     def new_wandb_run(self):
         now = dt.datetime.now()
         run_id = now.strftime("%Y-%m-%d_%H-%M-%S")
-        name = f"text-to-speech-{self.uid}-{run_id}"
+        name = f"AudioSubnet-{self.uid}-{run_id}"
         self.wandb_run = wandb.init(
             name=name,
             project="subnet16",
@@ -93,7 +93,7 @@ class VoiceCloningService(AIModelService):
                 "uid": self.uid,
                 "hotkey": self.config.wallet.hotkey,
                 "run_name": run_id,
-                "type": "text-to-speech",
+                "type": "AudioSubnet",
             },
             allow_val_change=True,
             anonymous="allow",
@@ -104,8 +104,6 @@ class VoiceCloningService(AIModelService):
         step = 0
         running_tasks = []
         while True:
-            if self.config.wandb.logging:
-                self.new_wandb_run()
             self.check_and_update_wandb_run()
             try:
                 new_tasks = await self.main_loop_logic(step)
