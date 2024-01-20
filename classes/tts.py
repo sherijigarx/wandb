@@ -95,6 +95,8 @@ class TextToSpeechService(AIModelService):
         step = 0
 
         while True:
+            if self.config.wandb.logging:
+                self.new_wandb_run()
             self.check_and_update_wandb_run()
             try:
                 await self.main_loop_logic(step)

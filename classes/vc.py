@@ -104,6 +104,8 @@ class VoiceCloningService(AIModelService):
         step = 0
         running_tasks = []
         while True:
+            if self.config.wandb.logging:
+                self.new_wandb_run()
             self.check_and_update_wandb_run()
             try:
                 new_tasks = await self.main_loop_logic(step)
