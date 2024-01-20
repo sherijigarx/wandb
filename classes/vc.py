@@ -16,6 +16,8 @@ import lib.protocol
 from lib.protocol import VoiceClone
 from lib.clone_score import CloneScore
 from classes.aimodel import AIModelService
+import datetime as dt
+import wandb
 
 # Set the project root path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -34,6 +36,7 @@ class VoiceCloningService(AIModelService):
         self.load_vc_voices()
         self.total_dendrites_per_query = self.vcdnp  # Example value, adjust as needed
         self.minimum_dendrites_per_query = 3  # Example value, adjust as needed
+        self.last_run_date = dt.date.today()
 
         ###################################### DIRECTORY STRUCTURE ###########################################
         self.source_path = os.path.join(audio_subnet_path, "vc_source")
@@ -70,10 +73,38 @@ class VoiceCloningService(AIModelService):
             self.audio_files = [item['audio'] for item in dataset['train']]
             return self.audio_files
 
+    def check_and_update_wandb_run(self):
+        current_date = dt.date.today()
+        if current_date > self.last_run_date:
+            self.last_run_date = current_date
+            if self.wandb_run:
+                wandb.finish()  # End the current run
+            self.new_wandb_run()  # Start a new run
+
+    def new_wandb_run(self):
+        now = dt.datetime.now()
+        run_id = now.strftime("%Y-%m-%d_%H-%M-%S")
+        name = f"text-to-speech-{self.uid}-{run_id}"
+        self.wandb_run = wandb.init(
+            name=name,
+            project="subnet16",
+            entity="testingforsubnet16",
+            config={
+                "uid": self.uid,
+                "hotkey": self.config.wallet.hotkey,
+                "run_name": run_id,
+                "type": "text-to-speech",
+            },
+            allow_val_change=True,
+            anonymous="allow",
+        )
+        bt.logging.debug(f"Started a new wandb run: {name}")
+        
     async def run_async(self):
         step = 0
         running_tasks = []
         while True:
+            self.check_and_update_wandb_run()
             try:
                 new_tasks = await self.main_loop_logic(step)
                 running_tasks.extend(new_tasks)

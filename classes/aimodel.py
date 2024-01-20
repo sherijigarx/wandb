@@ -32,7 +32,7 @@ class AIModelService:
         if AIModelService._scores is None:
             AIModelService._scores = torch.zeros_like(self.metagraph.S, dtype=torch.float32)
         self.scores = AIModelService._scores
-
+        self.uid = self.metagraph.hotkeys.index(self.config.wallet.hotkey)
 
     def get_config(self):
         parser = argparse.ArgumentParser()
@@ -45,6 +45,7 @@ class AIModelService:
         parser.add_argument("--hub_key", type=str, default=None, help="Supply the Huggingface Hub API key for prompt dataset")
         parser.add_argument("--vcdnp", type=int, default=5, help="Number of miners to query for each forward call.")
         parser.add_argument("--max_mse", type=float, default=1000.0, help="Maximum Mean Squared Error for Voice cloning.")
+        parser.add_argument("--wandb.logging", type=bool, default="True", help="Set this flag to disable/enable logging to wandb.")
 
         # Add Bittensor specific arguments
         bt.subtensor.add_args(parser)

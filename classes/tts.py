@@ -14,6 +14,9 @@ import lib
 import traceback
 import pandas as pd
 import sys
+import wandb
+import datetime as dt
+
 # Set the project root path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Set the 'AudioSubnet' directory path
@@ -34,6 +37,7 @@ class TextToSpeechService(AIModelService):
         self.last_reset_weights_block = self.current_block
         self.islocaltts = False
         self.p_index = 0
+        self.last_run_date = dt.date.today()
         
         ###################################### DIRECTORY STRUCTURE ###########################################
         self.tts_source_dir = os.path.join(audio_subnet_path, "tts_source")
@@ -59,11 +63,39 @@ class TextToSpeechService(AIModelService):
             self.local_prompts = self.local_prompts[0].values.tolist()
             bt.logging.info(f"Loaded prompts from {self.tts_source_dir}")
             os.remove(os.path.join(self.tts_source_dir, 'tts_prompts.csv'))
+
+    def check_and_update_wandb_run(self):
+        current_date = dt.date.today()
+        if current_date > self.last_run_date:
+            self.last_run_date = current_date
+            if self.wandb_run:
+                wandb.finish()  # End the current run
+            self.new_wandb_run()  # Start a new run
         
+    def new_wandb_run(self):
+        now = dt.datetime.now()
+        run_id = now.strftime("%Y-%m-%d_%H-%M-%S")
+        name = f"text-to-speech-{self.uid}-{run_id}"
+        self.wandb_run = wandb.init(
+            name=name,
+            project="subnet16",
+            entity="testingforsubnet16",
+            config={
+                "uid": self.uid,
+                "hotkey": self.config.wallet.hotkey,
+                "run_name": run_id,
+                "type": "text-to-speech",
+            },
+            allow_val_change=True,
+            anonymous="allow",
+        )
+        bt.logging.debug(f"Started a new wandb run: {name}")
+
     async def run_async(self):
         step = 0
 
         while True:
+            self.check_and_update_wandb_run()
             try:
                 await self.main_loop_logic(step)
                 step += 1
