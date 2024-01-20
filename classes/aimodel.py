@@ -32,7 +32,7 @@ class AIModelService:
         if AIModelService._scores is None:
             AIModelService._scores = torch.zeros_like(self.metagraph.S, dtype=torch.float32)
         self.scores = AIModelService._scores
-        self.uid = self.metagraph.hotkeys.index(self.config.wallet.hotkey)
+        self.uid = self.metagraph.hotkeys.ss58_address
 
     def get_config(self):
         parser = argparse.ArgumentParser()
