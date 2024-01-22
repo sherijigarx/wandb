@@ -32,6 +32,7 @@ This agreement outlines the terms and conditions for commercial use.
 # Step 1: Import necessary libraries and modules
 from scipy.io.wavfile import write as write_wav
 import bittensor as bt
+import datetime as dt
 import numpy as np
 import torchaudio
 import traceback
@@ -170,12 +171,24 @@ def main(config):
         )
         exit()
 
+    run_id = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     # Each miner gets a unique identity (UID) in the network for differentiation.
     my_subnet_uid = metagraph.hotkeys.index(wallet.hotkey.ss58_address)
     bt.logging.info(f"Running miner on uid: {my_subnet_uid}")
 
     if config.use_wandb:
-        wandb.init(project="subnet16", entity="testingforsubnet16")
+        wandb.init(
+            name=run_id,
+            project="subnet16", 
+            entity="testingforsubnet16",
+            config={
+                "UID": my_subnet_uid,
+                "hotkey": wallet.hotkey.ss58_address,
+                "run_name": run_id,
+                "type": "miner",
+                },
+                allow_val_change=True,
+            )
 
 
 
