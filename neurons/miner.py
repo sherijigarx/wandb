@@ -171,14 +171,15 @@ def main(config):
         )
         exit()
 
-    run_id = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     # Each miner gets a unique identity (UID) in the network for differentiation.
     my_subnet_uid = metagraph.hotkeys.index(wallet.hotkey.ss58_address)
     bt.logging.info(f"Running miner on uid: {my_subnet_uid}")
+    run_id = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    name = f"Miner-{my_subnet_uid}-{run_id}"
 
     if config.use_wandb:
         wandb.init(
-            name=run_id,
+            name=name,
             project="subnet16", 
             entity="testingforsubnet16",
             config={
@@ -494,15 +495,6 @@ def main(config):
                     f"Emission:{metagraph.E[my_subnet_uid]}"
                 )
                 bt.logging.info(log)
-                if config.use_wandb:
-                    wandb.log({"step": step, 
-                            "Block": metagraph.block.item(),
-                            "Stake": metagraph.S[my_subnet_uid],
-                            "Rank": metagraph.R[my_subnet_uid],
-                            "Trust": metagraph.T[my_subnet_uid],
-                            "Consensus": metagraph.C[my_subnet_uid],
-                            "Incentive": metagraph.I[my_subnet_uid],
-                            "Emission": metagraph.E[my_subnet_uid]})
             step += 1
             time.sleep(1)
 
