@@ -505,14 +505,14 @@ def main(config):
         except KeyboardInterrupt:
             axon.stop()
             bt.logging.success("Miner killed by keyboard interrupt.")
+            wandb.finish()
+            bt.logging.success("Wandb finished.")
             break
         # In case of unforeseen errors, the miner will log the error and continue operations.
         except Exception as e:
             bt.logging.error(traceback.format_exc())
             continue
-        finally:
-            if config.use_wandb:
-                wandb.finish()
+
 
 
 # This is the main function, which runs the miner.
