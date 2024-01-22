@@ -91,7 +91,7 @@ class VoiceCloningService(AIModelService):
             entity="testingforsubnet16",
             config={
                 "uid": self.uid,
-                "hotkey": self.config.wallet.hotkey.ss58_address,
+                "hotkey": self.config.wallet.hotkey,
                 "run_name": run_id,
                 "type": "AudioSubnet",
             },
