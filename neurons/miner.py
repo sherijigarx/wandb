@@ -38,6 +38,7 @@ import traceback
 import argparse
 import typing
 import torch
+import wandb
 import wave
 import time
 import sys
@@ -73,6 +74,9 @@ def get_config():
     )
     parser.add_argument(
         "--eleven_api", default='' , help="API key to be used for Eleven Labs." 
+    )
+    parser.add_argument(
+        "--use_wandb", default=True , help="Enable logging to Weights & Biases" 
     )
     parser.add_argument("--auto_update", default="yes", help="Auto update")
     # Adds override arguments for network and netuid.
@@ -169,6 +173,9 @@ def main(config):
     # Each miner gets a unique identity (UID) in the network for differentiation.
     my_subnet_uid = metagraph.hotkeys.index(wallet.hotkey.ss58_address)
     bt.logging.info(f"Running miner on uid: {my_subnet_uid}")
+
+    if config.use_wandb:
+        wandb.init(project="subnet16", entity="testingforsubnet16")
 
 
 
@@ -474,6 +481,15 @@ def main(config):
                     f"Emission:{metagraph.E[my_subnet_uid]}"
                 )
                 bt.logging.info(log)
+                if config.use_wandb:
+                    wandb.log({"step": step, 
+                            "Block": metagraph.block.item(),
+                            "Stake": metagraph.S[my_subnet_uid],
+                            "Rank": metagraph.R[my_subnet_uid],
+                            "Trust": metagraph.T[my_subnet_uid],
+                            "Consensus": metagraph.C[my_subnet_uid],
+                            "Incentive": metagraph.I[my_subnet_uid],
+                            "Emission": metagraph.E[my_subnet_uid]})
             step += 1
             time.sleep(1)
 
@@ -489,6 +505,9 @@ def main(config):
         except Exception as e:
             bt.logging.error(traceback.format_exc())
             continue
+        finally:
+            if config.use_wandb:
+                wandb.finish()
 
 
 # This is the main function, which runs the miner.
