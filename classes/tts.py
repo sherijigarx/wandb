@@ -75,7 +75,7 @@ class TextToSpeechService(AIModelService):
     def new_wandb_run(self):
         now = dt.datetime.now()
         run_id = now.strftime("%Y-%m-%d_%H-%M-%S")
-        name = f"AudioSubnet-{self.uid}-{run_id}"
+        name = f"Validator-{self.uid}-{run_id}"
         self.wandb_run = wandb.init(
             name=name,
             project="subnet16",
@@ -84,7 +84,7 @@ class TextToSpeechService(AIModelService):
                 "uid": self.uid,
                 "hotkey": self.wallet.hotkey.ss58_address,
                 "run_name": run_id,
-                "type": "AudioSubnet",
+                "type": "Validator",
             },
             tags=self.sys_info,
             allow_val_change=True,
