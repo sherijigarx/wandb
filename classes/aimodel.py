@@ -74,6 +74,7 @@ class AIModelService:
 
         # Convert dictionary to list of strings
         tags = [f"{key}: {value}" for key, value in system_info.items()]
+        tags.append(lib.__version__)
         return tags
     
     def setup_paths(self):
