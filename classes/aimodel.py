@@ -62,7 +62,7 @@ class AIModelService:
 
     def get_system_info(self):
         system_info = {
-            "OS -v:": platform.platform(),
+            "OS -v": platform.platform(),
             "CPU ": os.cpu_count(),
             "RAM": f"{psutil.virtual_memory().total / (1024**3):.2f} GB", 
             # "HotKey": self.wallet.hotkeys.ss58_address
