@@ -64,14 +64,16 @@ class AIModelService:
         system_info = {
             "os_version": platform.platform(),
             "cpu_cores": os.cpu_count(),
-            "ram": psutil.virtual_memory().total / (1024**3),  # RAM in GB
+            "ram": f"{psutil.virtual_memory().total / (1024**3):.2f} GB",  # RAM in GB
         }
 
         gpus = GPUtil.getGPUs()
         if gpus:
             system_info["gpu_model"] = gpus[0].name  # assuming single GPU
 
-        return system_info
+        # Convert dictionary to list of strings
+        tags = [f"{key}: {value}" for key, value in system_info.items()]
+        return tags
     
     def setup_paths(self):
         # Set the project root path
