@@ -76,7 +76,7 @@ class TextToSpeechService(AIModelService):
         now = dt.datetime.now()
         run_id = now.strftime("%Y-%m-%d_%H-%M-%S")
         name = f"AudioSubnet-{self.uid}-{run_id}"
-        tags = [ lib.__version__ , self.sys_info]
+        tags = [ lib.__version__  + self.sys_info]
         self.wandb_run = wandb.init(
             name=name,
             project="subnet16",
