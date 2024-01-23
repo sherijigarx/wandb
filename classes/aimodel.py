@@ -60,7 +60,7 @@ class AIModelService:
         config = bt.config(parser)
         return config
 
-    def get_system_info():
+    def get_system_info(self):
         system_info = {
             "os_version": platform.platform(),
             "cpu_cores": os.cpu_count(),
