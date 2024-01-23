@@ -95,6 +95,7 @@ class VoiceCloningService(AIModelService):
                 "run_name": run_id,
                 "type": "AudioSubnet",
             },
+            tags=self.sys_info,
             allow_val_change=True,
             anonymous="allow",
         )

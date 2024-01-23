@@ -1,3 +1,6 @@
+import platform
+import psutil
+import GPUtil
 import os
 import argparse
 import bittensor as bt
@@ -21,6 +24,7 @@ class AIModelService:
 
     def __init__(self):
         self.config = self.get_config()
+        self.sys_info = self.get_system_info()
         self.setup_paths()
         self.setup_logging()
         self.setup_wallet()
@@ -56,6 +60,19 @@ class AIModelService:
         config = bt.config(parser)
         return config
 
+    def get_system_info():
+        system_info = {
+            "os_version": platform.platform(),
+            "cpu_cores": os.cpu_count(),
+            "ram": psutil.virtual_memory().total / (1024**3),  # RAM in GB
+        }
+
+        gpus = GPUtil.getGPUs()
+        if gpus:
+            system_info["gpu_model"] = gpus[0].name  # assuming single GPU
+
+        return system_info
+    
     def setup_paths(self):
         # Set the project root path
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
