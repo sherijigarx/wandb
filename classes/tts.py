@@ -87,7 +87,7 @@ class TextToSpeechService(AIModelService):
                 "run_name": run_id,
                 "type": "AudioSubnet",
             },
-            tags=tags
+            tags=tags,
             allow_val_change=True,
             anonymous="allow",
         )
